@@ -18,7 +18,6 @@ The Health System API is designed to manage various aspects of a healthcare syst
   - [Medical Records](#medical-records)
   - [Prescriptions](#prescriptions)
   - [Billing](#billing)
-- [Contributing](#contributing
 - [Contact](#contact)
 - [Acknowledgements](#acknowledgements)
 
@@ -77,13 +76,13 @@ Start the server and navigate to `http://localhost:8080/HealthCareSystem_RESTAPI
 - **PUT /doctors/{id}** - Update a doctor's information
 - **DELETE /doctors/{id}** - Delete a doctor
 
-[Add similar sections for Appointments, Medical Records, Prescriptions, and Billing]
+..........................................................
 
 ## Contributing
 Contributions are welcome! For major changes, please open an issue first to discuss what you would like to change. Please ensure to update tests as appropriate.
 
 ## Contact
-Your Name - [your_email@example.com](mailto:your_email@example.com)
+Shea Sexton - [sheasexton02@gmail.com](mailto:sheasexton02@gmail.com)
 
 ## Acknowledgements
 - JAX-RS
