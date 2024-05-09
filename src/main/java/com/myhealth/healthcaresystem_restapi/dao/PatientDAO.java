@@ -35,15 +35,17 @@ public class PatientDAO {
         try {
             // Increment the ID and set it to the patient
             patient.setId(idCounter.incrementAndGet());
-
+            patient.sendDetailsToDoctors();
             // Attempt to add the patient to the list
             patients.add(patient);
+            patient.doctorSerialization();
+
 
             // If adding is successful, return the patient
             return patient;
         } catch (Exception e) {
 
-           throw new RuntimeException("Failed to add patient", e);
+            throw new RuntimeException("Failed to add patient", e);
         }
     }
 
@@ -53,9 +55,11 @@ public class PatientDAO {
             existingPatient.setName(patient.getName());
             existingPatient.setContactInformation(patient.getContactInformation());
             existingPatient.setAddress(patient.getAddress());
-            existingPatient.setMedicalHistory(patient.getMedicalHistory());
+//            existingPatient.setMedicalHistory(patient.getMedicalHistory());
             existingPatient.setCurrentHealthStatus(patient.getCurrentHealthStatus());
             existingPatient.setDoctors(patient.getDoctorIds());
+            existingPatient.sendDetailsToDoctors();
+            existingPatient.doctorSerialization();
             return existingPatient;
         } else {
             throw new WebApplicationException("Patient not found", Response.Status.NOT_FOUND);
@@ -65,10 +69,10 @@ public class PatientDAO {
     public void deletePatient(int id) {
         Patient patient = getPatientById(id);
         if (patient != null) {
+            patient.removeFromDoctors(); // Remove the patient from associated doctors
             patients.remove(patient);
         } else {
             throw new WebApplicationException("Patient not found", Response.Status.NOT_FOUND);
         }
     }
 }
-

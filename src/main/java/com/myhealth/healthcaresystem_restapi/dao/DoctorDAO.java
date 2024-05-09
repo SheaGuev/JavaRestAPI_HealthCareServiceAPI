@@ -36,6 +36,8 @@ public class DoctorDAO {
     public Doctor addDoctor(Doctor doctor) {
         doctor.setId(idCounter.incrementAndGet());
         doctors.add(doctor);
+        doctor.sendDetailsToPatients();
+        doctor.patientSerialization();
         return doctor;
     }
 
@@ -48,6 +50,8 @@ public class DoctorDAO {
             doctor.setAddress(updatedDoctor.getAddress());
             doctor.setSpecialisation(updatedDoctor.getSpecialisation());
             doctor.setPatients(updatedDoctor.getPatientsIds());
+            doctor.sendDetailsToPatients();
+            doctor.patientSerialization();
             return doctor;
         } else {
             throw new WebApplicationException("Doctor not found", Response.Status.NOT_FOUND);
@@ -57,8 +61,12 @@ public class DoctorDAO {
     // Delete a doctor
     public void deleteDoctor(int id) {
         Doctor doctor = getDoctorById(id);
+
         if (doctor != null) {
+            doctor.removeFromPatients(); // Remove the doctor from associated patients
             doctors.remove(doctor);
+
+
         } else {
             throw new WebApplicationException("Doctor not found", Response.Status.NOT_FOUND);
         }

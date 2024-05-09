@@ -21,20 +21,28 @@ public class AppointmentDAO {
 
     // Method to get all appointments
     public List<Appointment> getAllAppointments() {
-        return new ArrayList<>(appointments);
+        appointments.forEach(Appointment::updateDynamics); //update appointment to show updated details
+        List<Appointment> updatedAppointments = new ArrayList<>(appointments);
+//        updatedAppointments.forEach(Appointment::updateDynamics); //update appointment to show updated details
+        return updatedAppointments;
+//        return new ArrayList<>(appointments);
     }
 
     // Method to get a single appointment by ID
     public Appointment getAppointmentById(int id) {
-        return appointments.stream()
-                .filter(appointment -> appointment.getId() == id)
+        Appointment appointment = appointments.stream()
+                .filter(a -> a.getId() == id)
                 .findFirst()
                 .orElseThrow(() -> new WebApplicationException("Appointment not found", Response.Status.NOT_FOUND));
+        appointment.updateDynamics();
+        return appointment;
     }
 
     // Method to add a new appointment
     public Appointment addAppointment(Appointment appointment) {
         appointment.setId(idCounter.incrementAndGet());
+        appointment.patientSerialization();
+        appointment.doctorSerialization();
         appointments.add(appointment);
         return appointment;
     }
@@ -47,6 +55,8 @@ public class AppointmentDAO {
             appointment.setPatients(updatedAppointment.getPatientIds());
             appointment.setDate(updatedAppointment.getDate());
             appointment.setTime(updatedAppointment.getTime());
+            appointment.patientSerialization();
+            appointment.doctorSerialization();
             return appointment;
         } else {
             throw new WebApplicationException("Appointment not found", Response.Status.NOT_FOUND);

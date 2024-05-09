@@ -11,6 +11,9 @@ package com.myhealth.healthcaresystem_restapi.resources;
 
 import com.myhealth.healthcaresystem_restapi.MedicalRecord;
 import com.myhealth.healthcaresystem_restapi.dao.MedicalRecordDAO;
+import com.myhealth.healthcaresystem_restapi.dao.PatientDAO;
+import com.myhealth.healthcaresystem_restapi.Patient;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -18,6 +21,7 @@ import javax.ws.rs.core.Response;
 @Path("/medicalRecords")
 public class MedicalRecordResource {
     private MedicalRecordDAO medicalRecordDao = new MedicalRecordDAO();
+    private PatientDAO patientDao = new PatientDAO();
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -46,6 +50,14 @@ public class MedicalRecordResource {
     public Response addMedicalRecord(MedicalRecord medicalRecord) {
         try {
             MedicalRecord newRecord = medicalRecordDao.addMedicalRecord(medicalRecord);
+            // Retrieve the patient associated with the medical record
+            Patient patient = patientDao.getPatientById(newRecord.getPatientIds());
+
+            // Update the patient's medical history
+            patient.updateMedicalHistory(newRecord);
+
+//            // Update the patient in the database
+//            patientDao.updatePatient(patient.getId(), patient);
             return Response.status(Response.Status.CREATED).entity(newRecord).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
@@ -59,6 +71,11 @@ public class MedicalRecordResource {
     public Response updateMedicalRecord(@PathParam("id") int id, MedicalRecord medicalRecord) {
         try {
             MedicalRecord updatedRecord = medicalRecordDao.updateMedicalRecord(id, medicalRecord);
+            // Retrieve the patient associated with the medical record
+            Patient patient = patientDao.getPatientById(updatedRecord.getPatientIds());
+
+            // Update the patient's medical history
+            patient.updateMedicalHistory(updatedRecord);
             return Response.ok(updatedRecord).build();
         } catch (WebApplicationException e) {
             return Response.status(e.getResponse().getStatus()).entity(e.getMessage()).build();

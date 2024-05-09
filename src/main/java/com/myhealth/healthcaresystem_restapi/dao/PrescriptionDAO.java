@@ -21,18 +21,27 @@ public class PrescriptionDAO {
     private static final List<Prescription> prescriptions = new ArrayList<>();
 
     public List<Prescription> getAllPrescriptions() {
-        return new ArrayList<>(prescriptions);
+        prescriptions.forEach(Prescription::updateDynamics); //update prescription to show updated details
+        List<Prescription> updatedPrescription = new ArrayList<>(prescriptions);
+//        updatedPrescription.forEach(Prescription::updateDynamics); //update prescription to show updated details
+        return updatedPrescription;
+
+//        return new ArrayList<>(prescriptions);
     }
 
     public Prescription getPrescriptionById(int id) {
-        return prescriptions.stream()
+        Prescription updatePrescriptions = prescriptions.stream()
                 .filter(prescription -> prescription.getId() == id)
                 .findFirst()
                 .orElseThrow(() -> new WebApplicationException("Prescription not found", Response.Status.NOT_FOUND));
+        updatePrescriptions.updateDynamics();
+        return updatePrescriptions;
     }
 
     public Prescription addPrescription(Prescription prescription) {
         prescription.setId(idCounter.incrementAndGet());
+        prescription.doctorSerialization();
+        prescription.patientSerialization();
         prescriptions.add(prescription);
         return prescription;
     }
@@ -46,6 +55,8 @@ public class PrescriptionDAO {
             prescription.setDuration(updatedPrescription.getDuration());
             prescription.setDoctors(updatedPrescription.getDoctorIds());
             prescription.setPatients(updatedPrescription.getPatientIds());
+            prescription.doctorSerialization();
+            prescription.patientSerialization();
             return prescription;
         } else {
             throw new WebApplicationException("Prescription not found", Response.Status.NOT_FOUND);

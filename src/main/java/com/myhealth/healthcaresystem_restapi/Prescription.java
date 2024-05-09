@@ -2,8 +2,11 @@ package com.myhealth.healthcaresystem_restapi;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.myhealth.healthcaresystem_restapi.dao.AppointmentDAO;
 import com.myhealth.healthcaresystem_restapi.dao.DoctorDAO;
 import com.myhealth.healthcaresystem_restapi.dao.PatientDAO;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,12 +49,12 @@ public class Prescription {
         return doctorIds.stream()
                         .map(doctorId -> {
                             Doctor doctor11 = doctorDao.getDoctorById(doctorId);
-                            doctor11.setPatients(null); // Set the patients list to null
+//                            doctor11.setPatients(null); // Set the patients list to null
                             return doctor11;
                         })
                         .collect(Collectors.toList());
         }else{
-            return null;
+            return new ArrayList<>();
         }
     }
     
@@ -62,12 +65,36 @@ public class Prescription {
         return patientIds.stream()
                         .map(patientId -> {
                             Patient patient11 = patientDao.getPatientById(patientId);
-                            patient11.setDoctors(null); // Set the patients list to null
+//                            patient11.setDoctors(null); // Set the patients list to null
                             return patient11;
                         })   
                         .collect(Collectors.toList());
         }else{
-            return null;
+            return new ArrayList<>();
+        }
+    }
+
+    public void doctorSerialization() {
+        if (this.doctors != null) {
+            List<Doctor> copiedDoctors = new ArrayList<>();
+            for (Doctor record : this.doctors) {
+                Doctor copiedDoctor = new Doctor(record.getName(), record.getContactInformation(), record.getAddress(), record.getSpecialisation(), record.getPatientsIds(), record.getId());
+                copiedDoctor.setPatients(null);
+                copiedDoctors.add(copiedDoctor);
+            }
+            this.doctors = copiedDoctors;
+        }
+    }
+
+    public void patientSerialization() {
+        if (this.patients != null) {
+            List<Patient> copiedPatients = new ArrayList<>();
+            for (Patient record : this.patients) {
+                Patient copiedPatient = new Patient(record.getName(), record.getContactInformation(), record.getAddress(), record.getMedicalHistory(), record.getCurrentHealthStatus(), record.getDoctorIds(), record.getId());
+                copiedPatient.setDoctors(null);
+                copiedPatients.add(copiedPatient);
+            }
+            this.patients = copiedPatients;
         }
     }
     
@@ -138,6 +165,33 @@ public class Prescription {
         this.patientIds = patientIds;
         this.patients = getPatientDetails(patientIds);//this sets the doctors as the new doctors from the IDs of the input
     }
+
+    public void updateDynamics() {
+        PatientDAO patientDAO = new PatientDAO();
+        DoctorDAO doctorDAO = new DoctorDAO();
+        List<Patient> updatePatients = new ArrayList<>();
+        List<Doctor> updateDoctors = new ArrayList<>();
+
+        if (patients != null) {
+            for (Patient patient : patients) {
+                Patient ogPatient = patientDAO.getPatientById(patient.getId());
+                updatePatients.add(ogPatient);
+            }
+            this.patients = updatePatients;
+            this.patientSerialization();
+        }
+
+        if (doctors != null) {
+            for (Doctor doctor : doctors) {
+                Doctor ogDoctor = doctorDAO.getDoctorById(doctor.getId());
+                updateDoctors.add(ogDoctor);
+            }
+            this.doctors = updateDoctors;
+            this.doctorSerialization();
+        }
+
+    }
+
 }
 
 

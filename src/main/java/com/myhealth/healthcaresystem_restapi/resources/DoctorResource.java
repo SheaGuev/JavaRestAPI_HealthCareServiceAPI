@@ -61,6 +61,7 @@ public class DoctorResource {
     public Response updateDoctor(@PathParam("id") int id, Doctor doctor) {
         try {
             Doctor updatedDoctor = doctorDao.updateDoctor(id, doctor);
+//            updatedDoctor.sendDetailsToPatients();
             return Response.ok(updatedDoctor).build();
         } catch (WebApplicationException e) {
             return Response.status(e.getResponse().getStatus()).entity(e.getMessage()).build();

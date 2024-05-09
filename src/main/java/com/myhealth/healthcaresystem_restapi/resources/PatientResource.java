@@ -26,9 +26,9 @@ public class PatientResource {
             List<Patient> patients = patientDao.getAllPatients();
             return Response.ok(patients).build();
         } catch (Exception e) {
-         
+
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-            
+
         }
     }
 
@@ -50,9 +50,9 @@ public class PatientResource {
     public Response addPatient(Patient patient) {
         try {
             Patient newPatient = patientDao.addPatient(patient);
-            
+//            newPatient.sendDetailsToDoctors();
             return Response.status(Response.Status.CREATED).entity(newPatient).build();
-            
+
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         }
@@ -65,6 +65,7 @@ public class PatientResource {
     public Response updatePatient(@PathParam("id") int id, Patient patient) {
         try {
             Patient updatedPatient = patientDao.updatePatient(id, patient);
+//            updatedPatient.sendDetailsToDoctors();
             return Response.ok(updatedPatient).build();
         } catch (WebApplicationException e) {
             return Response.status(e.getResponse().getStatus()).entity(e.getMessage()).build();
@@ -82,3 +83,4 @@ public class PatientResource {
         }
     }
 }
+
