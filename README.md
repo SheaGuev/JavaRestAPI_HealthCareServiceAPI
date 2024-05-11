@@ -45,7 +45,7 @@ The Health System API is designed to manage various aspects of a healthcare syst
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your_username/HealthSystemAPI.git
+   git clone https://github.com/sheaguev/HealthSystemAPI.git
    ```
 2. Navigate to the project directory:
    ```bash
